@@ -49,6 +49,12 @@ jar {
     exclude "**/unused"
 }
 
+dependencies {
+    compile files(
+        'Baubles-deobf.jar'
+    )
+}
+
 processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
