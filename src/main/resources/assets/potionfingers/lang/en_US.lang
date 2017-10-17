@@ -1,3 +1,4 @@
 potionfingers.noEffect=(No Effect)
 
 item.potionfingers:ring.name=Potion Ring
+item.potionfingers:ring.enabled.name=Potion Ring of %s

@@ -1,6 +1,8 @@
 package vazkii.potionfingers;
 
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -12,7 +14,13 @@ public class PotionFingers {
 	public static final String MOD_NAME = "Potion Fingers";
 	public static final String BUILD = "GRADLE:BUILD";
 	public static final String VERSION = "GRADLE:VERSION-" + BUILD;
-	public static final String DEPENDENCIES = "required-before:autoreglib";
+	public static final String DEPENDENCIES = "required-before:autoreglib;required-after:baubles";
+	
+	public static final Potion[] DEFAULT_EFFECTS = {
+			MobEffects.SPEED, MobEffects.HASTE,
+			MobEffects.RESISTANCE, MobEffects.JUMP_BOOST,	
+			MobEffects.STRENGTH, MobEffects.REGENERATION
+	};
 	
 	public static Item ring;
 	

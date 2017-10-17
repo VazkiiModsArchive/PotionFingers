@@ -1,26 +1,31 @@
 package vazkii.potionfingers;
 
-import java.util.List;
-
-import net.minecraft.client.util.ITooltipFlag;
+import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
+import baubles.api.IBauble;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.MobEffects;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.world.World;
+import vazkii.arl.interf.IItemColorProvider;
 import vazkii.arl.item.ItemMod;
 import vazkii.arl.util.ItemNBTHelper;
 
-public class ItemRing extends ItemMod {
+public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 
 	private static final String TAG_POTION_EFFECT = "effect";
 	
 	public ItemRing() {
 		super("ring");
 		setCreativeTab(CreativeTabs.BREWING);
+		setMaxStackSize(1);
 	}
 	
 	@Override
@@ -30,16 +35,26 @@ public class ItemRing extends ItemMod {
 	
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-		super.getSubItems(tab, subItems);
-		subItems.add(getRingForPotion(MobEffects.HASTE));
+		if(tab == getCreativeTab()) {
+			super.getSubItems(tab, subItems);
+			for(Potion p : PotionFingers.DEFAULT_EFFECTS)
+				subItems.add(getRingForPotion(p));
+		}
 	}
 	
 	@Override
-	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		Potion potion = getPotion(stack);
-		if(potion == null)
-			tooltip.add(I18n.translateToLocal("potionfingers.noEffect"));
-		else tooltip.add(I18n.translateToLocal(potion.getName()));
+	public boolean hasEffect(ItemStack stack) {
+		return getPotion(stack) != null;
+	}
+
+	@Override
+	public String getItemStackDisplayName(ItemStack stack) {
+		Potion p = getPotion(stack);
+		if(p == null)
+			return super.getItemStackDisplayName(stack);
+		
+		String format = I18n.translateToLocal("item.potionfingers:ring.enabled.name");
+		return String.format(format, I18n.translateToLocal(p.getName()));
 	}
 	
 	public static ItemStack getRingForPotion(Potion potion) {
@@ -50,11 +65,68 @@ public class ItemRing extends ItemMod {
 	}
 	
 	public static Potion getPotion(ItemStack stack) {
+		if(stack == null)
+			return null;
+		
 		String effect = ItemNBTHelper.getString(stack, TAG_POTION_EFFECT, "");
 		if(effect.isEmpty())
 			return null;
 		
 		return Potion.REGISTRY.getObject(new ResourceLocation(effect));
+	}
+
+	@Override
+	public IItemColor getItemColor() {
+		return (stack, i) -> {
+			if(i != 0) {
+				Potion p = getPotion(stack);
+				if(p != null)
+					return p.getLiquidColor();
+			}
+			
+			return 0xFFFFFF;
+		};
+	}
+
+	@Override
+	public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
+		updatePotionStatus(player, getPotion(itemstack));
+	}
+	
+	@Override
+	public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
+		updatePotionStatus(player, getPotion(itemstack));
+	}
+	
+	public void updatePotionStatus(EntityLivingBase player, Potion potion) {
+		if(potion == null || !(player instanceof EntityPlayer))
+			return;
+		
+		IInventory inv = BaublesApi.getBaubles((EntityPlayer) player);
+		ItemStack ring1 = inv.getStackInSlot(1);
+		ItemStack ring2 = inv.getStackInSlot(2);
+		
+		Potion potion1 = getPotion(ring1);
+		Potion potion2 = getPotion(ring2);
+		
+		int level = -1;
+		if(potion1 == potion)
+			level++;
+		if(potion2 == potion)
+			level++;
+		
+		PotionEffect currentEffect = player.getActivePotionEffect(potion);
+		int currentLevel = currentEffect != null ? currentEffect.getAmplifier() : -1;
+		if(currentLevel != level) {
+			player.removeActivePotionEffect(potion);
+			if(level != -1 && !player.world.isRemote)
+				player.addPotionEffect(new PotionEffect(potion, Integer.MAX_VALUE, level, true, false));
+		}
+	}
+	
+	@Override
+	public BaubleType getBaubleType(ItemStack arg0) {
+		return BaubleType.RING;
 	}
 
 }
