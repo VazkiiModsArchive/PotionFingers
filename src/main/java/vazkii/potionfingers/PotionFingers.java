@@ -1,5 +1,6 @@
 package vazkii.potionfingers;
 
+import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -13,9 +14,11 @@ public class PotionFingers {
 	public static final String VERSION = "GRADLE:VERSION-" + BUILD;
 	public static final String DEPENDENCIES = "required-before:autoreglib";
 	
+	public static Item ring;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		System.out.println("HELLO");
+		ring = new ItemRing();
 	}
 	
 }
