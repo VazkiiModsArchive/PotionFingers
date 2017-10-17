@@ -22,10 +22,16 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 
 	private static final String TAG_POTION_EFFECT = "effect";
 	
+	private static final String[] VARIANTS = new String[] {
+		"ring_disabled",
+		"ring_enabled"
+	};
+	
 	public ItemRing() {
-		super("ring");
+		super("ring", VARIANTS);
 		setCreativeTab(CreativeTabs.BREWING);
 		setMaxStackSize(1);
+		setHasSubtypes(true);
 	}
 	
 	@Override
@@ -34,9 +40,14 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 	}
 	
 	@Override
+	public String getUniqueModel() {
+		return "ring";
+	}
+	
+	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		if(tab == getCreativeTab()) {
-			super.getSubItems(tab, subItems);
+			subItems.add(new ItemStack(this));
 			for(Potion p : PotionFingers.DEFAULT_EFFECTS)
 				subItems.add(getRingForPotion(p));
 		}
@@ -49,17 +60,18 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 
 	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
+		String name = super.getItemStackDisplayName(stack);
 		Potion p = getPotion(stack);
-		if(p == null)
-			return super.getItemStackDisplayName(stack);
+		String potionName = "N/A";
+		if(p != null)
+			potionName = I18n.translateToLocal(p.getName());
 		
-		String format = I18n.translateToLocal("item.potionfingers:ring.enabled.name");
-		return String.format(format, I18n.translateToLocal(p.getName()));
+		return String.format(name, potionName);
 	}
 	
 	public static ItemStack getRingForPotion(Potion potion) {
 		String id = potion.getRegistryName().toString();
-		ItemStack stack = new ItemStack(PotionFingers.ring);
+		ItemStack stack = new ItemStack(PotionFingers.ring, 1, 1);
 		ItemNBTHelper.setString(stack, TAG_POTION_EFFECT, id);
 		return stack;
 	}
