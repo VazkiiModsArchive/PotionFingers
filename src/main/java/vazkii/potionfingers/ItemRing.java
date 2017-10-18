@@ -14,6 +14,8 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.interf.IItemColorProvider;
 import vazkii.arl.item.ItemMod;
 import vazkii.arl.util.ItemNBTHelper;
@@ -88,15 +90,18 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public IItemColor getItemColor() {
-		return (stack, i) -> {
-			if(i != 0) {
-				Potion p = getPotion(stack);
-				if(p != null)
-					return p.getLiquidColor();
+		return new IItemColor() {
+			public int getColorFromItemstack(ItemStack stack, int i) {
+				if(i != 0) {
+					Potion p = getPotion(stack);
+					if(p != null)
+						return p.getLiquidColor();
+				}
+				
+				return 0xFFFFFF;
 			}
-			
-			return 0xFFFFFF;
 		};
 	}
 

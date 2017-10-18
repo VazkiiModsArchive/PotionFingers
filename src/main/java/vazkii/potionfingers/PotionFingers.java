@@ -19,7 +19,7 @@ public class PotionFingers {
 	public static final String MOD_NAME = "Potion Fingers";
 	public static final String BUILD = "GRADLE:BUILD";
 	public static final String VERSION = "GRADLE:VERSION-" + BUILD;
-	public static final String DEPENDENCIES = "required-before:autoreglib;required-after:baubles";
+	public static final String DEPENDENCIES = "required-after:autoreglib;required-after:baubles;";
 	
 	public static final Potion[] DEFAULT_EFFECTS = {
 			MobEffects.SPEED, MobEffects.HASTE,
