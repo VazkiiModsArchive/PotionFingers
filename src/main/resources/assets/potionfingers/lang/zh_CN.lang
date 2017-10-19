@@ -1,4 +1,4 @@
-potionfingers.noEffect=(无效果)
+potionfingers.noEffect=（无效果）
 
 item.potionfingers:ring_disabled.name=药水戒指
 item.potionfingers:ring_enabled.name=%s药水戒指
