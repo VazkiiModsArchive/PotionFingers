@@ -6,7 +6,6 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
-import net.minecraftforge.client.event.GuiScreenEvent.PotionShiftEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -26,7 +25,7 @@ public class PotionFingers {
 			MobEffects.RESISTANCE, MobEffects.JUMP_BOOST,	
 			MobEffects.STRENGTH, MobEffects.REGENERATION
 	};
-	
+
 	public static Item ring;
 	
 	@EventHandler
@@ -52,5 +51,5 @@ public class PotionFingers {
 				'R', new ItemStack(ring),
 				'I', item);
 	}
-	
+
 }
