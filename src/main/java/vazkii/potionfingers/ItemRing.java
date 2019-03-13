@@ -128,8 +128,8 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 				level++;
 			}
 		}
-		if (level > 2) {
-			level = 2;
+		if (level > 1) {
+			level = 1;
 		}
 		PotionEffect currentEffect = player.getActivePotionEffect(potion);
 		int currentLevel = currentEffect != null ? currentEffect.getAmplifier() : -1;
