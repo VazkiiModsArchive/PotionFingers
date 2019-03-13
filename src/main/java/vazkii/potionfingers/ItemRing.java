@@ -93,7 +93,8 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 	@SideOnly(Side.CLIENT)
 	public IItemColor getItemColor() {
 		return new IItemColor() {
-			public int getColorFromItemstack(ItemStack stack, int i) {
+			@Override
+			public int colorMultiplier(ItemStack stack, int i) {
 				if(i != 0) {
 					Potion p = getPotion(stack);
 					if(p != null)
