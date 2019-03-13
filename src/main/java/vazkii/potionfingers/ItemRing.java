@@ -3,17 +3,17 @@ package vazkii.potionfingers;
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
+import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import vazkii.arl.interf.IItemColorProvider;
@@ -66,7 +66,7 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 		Potion p = getPotion(stack);
 		String potionName = "N/A";
 		if(p != null)
-			potionName = I18n.translateToLocal(p.getName());
+			potionName = I18n.format(p.getName());
 		
 		return String.format(name, potionName);
 	}
@@ -93,7 +93,8 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 	@SideOnly(Side.CLIENT)
 	public IItemColor getItemColor() {
 		return new IItemColor() {
-			public int getColorFromItemstack(ItemStack stack, int i) {
+			@Override
+			public int colorMultiplier(ItemStack stack, int i) {
 				if(i != 0) {
 					Potion p = getPotion(stack);
 					if(p != null)
@@ -118,23 +119,21 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 	public void updatePotionStatus(EntityLivingBase player, Potion potion) {
 		if(potion == null || !(player instanceof EntityPlayer))
 			return;
-		
-		IInventory inv = BaublesApi.getBaubles((EntityPlayer) player);
-		ItemStack ring1 = inv.getStackInSlot(1);
-		ItemStack ring2 = inv.getStackInSlot(2);
-		
-		Potion potion1 = getPotion(ring1);
-		Potion potion2 = getPotion(ring2);
-		
+		IBaublesItemHandler inv = BaublesApi.getBaublesHandler((EntityPlayer) player);
 		int level = -1;
-		if(potion1 == potion)
-			level++;
-		if(potion2 == potion)
-			level++;
-		
+		for (int slot:BaubleType.RING.getValidSlots()) {
+			ItemStack ring1 = inv.getStackInSlot(slot);
+			Potion potion1 = getPotion(ring1);
+			if (potion1 == potion) {
+				level++;
+			}
+		}
+		if (level > 1) {
+			level = 1;
+		}
 		PotionEffect currentEffect = player.getActivePotionEffect(potion);
 		int currentLevel = currentEffect != null ? currentEffect.getAmplifier() : -1;
-		if(currentLevel != level) {
+		if (currentLevel != level) {
 			player.removeActivePotionEffect(potion);
 			if(level != -1 && !player.world.isRemote)
 				player.addPotionEffect(new PotionEffect(potion, Integer.MAX_VALUE, level, true, false));

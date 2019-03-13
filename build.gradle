@@ -50,9 +50,8 @@ jar {
 }
 
 dependencies {
-    compile files(
-        'Baubles-deobf.jar'
-    )
+    compile "baubles:Baubles:1.12:1.5.2"
+    compile "autoreglib:AutoRegLib:1.3:26"
 }
 
 processResources {
@@ -67,6 +66,12 @@ processResources {
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info', '**/psd/**'
+    }
+}
+
+repositories {
+	maven {
+        url = "https://minecraft.curseforge.com/api/maven/"
     }
 }
 
