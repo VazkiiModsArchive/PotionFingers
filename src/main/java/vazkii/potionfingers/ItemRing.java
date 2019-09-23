@@ -107,15 +107,16 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 
 	@Override
 	public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
-		updatePotionStatus(player, getPotion(itemstack));
+		updatePotionStatus(player, itemstack, false);
 	}
 	
 	@Override
 	public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
-		updatePotionStatus(player, getPotion(itemstack));
+		updatePotionStatus(player, itemstack, true);
 	}
 	
-	public void updatePotionStatus(EntityLivingBase player, Potion potion) {
+	public void updatePotionStatus(EntityLivingBase player, ItemStack ring, boolean unequipping) {
+	    Potion potion = getPotion(ring);
 		if(potion == null || !(player instanceof EntityPlayer))
 			return;
 		
@@ -123,8 +124,8 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 		ItemStack ring1 = inv.getStackInSlot(1);
 		ItemStack ring2 = inv.getStackInSlot(2);
 		
-		Potion potion1 = getPotion(ring1);
-		Potion potion2 = getPotion(ring2);
+		Potion potion1 = unequipping && ring == ring1 ? null : getPotion(ring1);
+		Potion potion2 = unequipping && ring == ring2 ? null : getPotion(ring2);
 		
 		int level = -1;
 		if(potion1 == potion)
