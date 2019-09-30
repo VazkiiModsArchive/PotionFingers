@@ -99,7 +99,7 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 					if(p != null)
 						return p.getLiquidColor();
 				}
-				
+
 				return 0xFFFFFF;
 			}
 		};
@@ -135,8 +135,8 @@ public class ItemRing extends ItemMod implements IBauble, IItemColorProvider {
 		
 		PotionEffect currentEffect = player.getActivePotionEffect(potion);
 		int currentLevel = currentEffect != null ? currentEffect.getAmplifier() : -1;
-		if(currentLevel != level) {
-			player.removeActivePotionEffect(potion);
+		if (currentLevel != level) {
+			player.removePotionEffect(potion);
 			if(level != -1 && !player.world.isRemote)
 				player.addPotionEffect(new PotionEffect(potion, Integer.MAX_VALUE, level, true, false));
 		}
